@@ -16,6 +16,16 @@ function fromArray(array) {
     }
   })
 }
+function fromEvent(DOMElement, eventName) {
+  return createCollection(function(callback) {
+    DOMElement.addEventListener(eventName, callback)
+  })
+}
+function fromPromise(promise) {
+  return createCollection(function (callback){
+    promise.then(callback)
+  })
+}
 
 
 function map(mapFn) {
@@ -36,7 +46,13 @@ function filter(filterFn) {
 
 const numbers = fromArray([1,2,3,4,5]);
 
-numbers
-    .manipulate(map(v => v *10))
-    .manipulate(filter(v => v === 10))
+// const button = document.createElement('button');
+// const clicks = fromEvent(button, 'click')
+const posts = fromPromise(fetch('api//'));
+
+posts
+    .manipulate(map(r => r.json()))
     .getValues( v => console.log(v))
+
+// button.click();
+
