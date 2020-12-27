@@ -17,4 +17,7 @@
 - live editor: https://stackblitz.com/edit/01-the-problem?file=index.js
 - local: start/1-hands-on-the-problem.js
 
-## Exercise #1 - The Problem
+## Exercise #2 - The callback
+
+
+## Exercise #3 - The Filter
