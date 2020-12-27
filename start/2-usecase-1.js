@@ -1,21 +1,21 @@
-class Publisher {
+class Store {
   constructor(initialState) {
     this.state = initialState;
-    this.subscribers = new Set();
+    this.listeners = new Set();
   }
 
-  publish(state) {
-    this.state = state;
-    this.subscribers.forEach( subscriber => subscriber.update(state));
+  getState() {
+    return this.state;
   }
 
-  subscribe(subscriber) {
-    subscriber.update(this.state);
-    this.subscribers.add(subscriber);
+  dispatch(state) {
+    this.state = Object.assign(this.state, state);
+    this.listeners.forEach( listener => listener(this.state));
   }
 
-  unsubscribe(subscriber) {
-    this.subscribers.delete(subscriber);
+  subscribe(listenerFn) {
+    this.listeners.add(listenerFn);
+    return () => this.listeners.delete(listenerFn);
   }
 }
 
