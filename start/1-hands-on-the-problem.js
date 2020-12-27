@@ -16,9 +16,26 @@ class Publisher {
   }
 }
 
-class Auth extends Publisher {
-  constructor() {
+class StatefulPublisher extends Publisher{
+  constructor(initialState) {
     super();
+    this.state = initialState;
+  }
+
+  publish(state) {
+    this.state = state;
+    super.publish(state);
+  }
+
+  subscribe(subscriber) {
+    subscriber.update(this.state)
+    super.subscribe(subscriber);
+  }
+}
+
+class Auth extends StatefulPublisher {
+  constructor() {
+    super(null);
     this.currentUser = null;
   }
 
@@ -72,12 +89,13 @@ const permissionManager = new PermissionManager();
 const router = new Router();
 
 // subscribe
-auth.subscribe(toast);
+
 auth.subscribe(permissionManager);
 auth.subscribe(router);
 
 auth.signIn();
-auth.signOut();
+
+auth.subscribe(toast);
 
 
 
