@@ -9,11 +9,12 @@
     
 - No dependencies or external libraries needed.
 
-## Part I - The observable pattern
+## Part I - The Observer pattern
 - Link to GOF book: https://www.amazon.com/Design-Patterns-Object-Oriented-Addison-Wesley-Professional-ebook/dp/B000SEIBB8
 - Observable pattern wikipedia: https://en.wikipedia.org/wiki/Observer_pattern
 
-
 ## Exercise #1 - The Problem
 - live editor: https://stackblitz.com/edit/01-the-problem?file=index.js
-- local: start/1_observer_start.js
+- local: start/1-hands-on-the-problem.js
+
+## Exercise #1 - The Problem
