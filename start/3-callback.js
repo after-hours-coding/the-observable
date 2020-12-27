@@ -39,15 +39,24 @@ function fromPromise(promise) {
 // manipulate functions
 function map(mapFn) {
   return function (inputCollection) {
-    return createCollection(function (callbackFn) {
-      inputCollection.getValues( value => callbackFn(mapFn(value)))
+    return createCollection(function (callbacks) {
+      inputCollection.getValues({
+        onData: function (value) {
+          callbacks.onData(mapFn(value))
+        },
+        onDone: callbacks.onDone
+      })
     })
   }
 }
 function filter(filterFn) {
   return function (inputCollection) {
     return createCollection(function(callbackFn){
-      inputCollection.getValues( value => filterFn(value) && callbackFn(value))
+      inputCollection.getValues({
+        onData: function (value) {
+          filterFn(value) && callbackFn(value)
+        }
+      })
     })
   }
 }
@@ -55,7 +64,6 @@ function filter(filterFn) {
 /*
    RUN TIME!
  */
-
 const numbers = fromArray([1,2,3,4,5]);
 
 // const button = document.createElement('button');
@@ -73,7 +81,6 @@ const callbacks = {
     console.log("done");
   }
 }
-
 
 numbers
     .manipulate(map(v => v * 10))
