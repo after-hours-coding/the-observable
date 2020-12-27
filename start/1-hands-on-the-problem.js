@@ -1,41 +1,83 @@
-// Holds a state (currentUser), end expose
-// methods to alter it
-class Auth {
+class Publisher {
   constructor() {
+    this.subscribers = new Set();
+  }
+
+  publish(state) {
+    this.subscribers.forEach( subscriber => subscriber.update(state));
+  }
+
+  subscribe(subscriber) {
+    this.subscribers.add(subscriber);
+  }
+
+  unsubscribe(subscriber) {
+    this.subscribers.delete(subscriber);
+  }
+}
+
+class Auth extends Publisher {
+  constructor() {
+    super();
     this.currentUser = null;
   }
 
   signIn() {
     this.currentUser = {name: "Nir"};
+    this.publish(this.currentUser);
   }
 
   signOut() {
     this.currentUser = null;
+    this.publish(this.currentUser);
   }
 }
 
-// Represents a UI component that shows a message
-// TODO: When a use logged in - show a message with the user name
 class ToastMessage {
+  update(user) {
+    if(user) {
+      this.showToast(user.name)
+    }
+
+  }
+
   showToast(message) {
     console.log('Display toast message: ' + message);
   }
 }
-
-// Represents a Service that knows how to fetch permissions
-// for a provided User
-// TODO: When a use logged in - fetch a permissions
 class PermissionManager {
+  update(user) {
+    if(user) {
+      this.getPermissionsForUser(user);
+    }
+  }
   getPermissionsForUser(user) {
     console.log('Fetching permissions for: ' + user.name);
   }
 }
-
-// Responsible for routing and redirects
-// TODO: When a use logged in - route to dashboard
-// TODO: When a use logged out - route to back to login screen
 class Router {
+  update(user) {
+    this.redirectTo(user ? 'dashboard' : 'login')
+  }
   redirectTo(routeName) {
     console.log('Redirecting to' + routeName);
   }
 }
+
+// runtime
+const auth = new Auth();
+
+const toast = new ToastMessage();
+const permissionManager = new PermissionManager();
+const router = new Router();
+
+// subscribe
+auth.subscribe(toast);
+auth.subscribe(permissionManager);
+auth.subscribe(router);
+
+auth.signIn();
+auth.signOut();
+
+
+
