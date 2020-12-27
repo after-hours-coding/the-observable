@@ -1,4 +1,5 @@
-// collection is an object with getValues
+// collection is an object with getValues that wrap
+// different types of callbacks in JS
 function createCollection(getValues) {
   return {
     getValues,
@@ -10,24 +11,32 @@ function createCollection(getValues) {
 
 // create collection from array
 function fromArray(array) {
-  return createCollection(function (callback) {
+  return createCollection(function (callbacks) {
     for(let item of array) {
-      callback(item);
+      callbacks.onData(item);
     }
+    callbacks.onDone()
   })
 }
+
+// create collection from DOM events
 function fromEvent(DOMElement, eventName) {
-  return createCollection(function(callback) {
-    DOMElement.addEventListener(eventName, callback)
+  return createCollection(function(callbacks) {
+    DOMElement.addEventListener(eventName, callbacks.onData)
   })
 }
+
+// create collection from promise
 function fromPromise(promise) {
-  return createCollection(function (callback){
-    promise.then(callback)
+  return createCollection(function (callbacks){
+    promise
+        .then(callbacks.onData, callbacks.onError)
+        .finally(callbacks.onDone)
   })
 }
 
 
+// manipulate functions
 function map(mapFn) {
   return function (inputCollection) {
     return createCollection(function (callbackFn) {
@@ -43,16 +52,32 @@ function filter(filterFn) {
   }
 }
 
+/*
+   RUN TIME!
+ */
 
 const numbers = fromArray([1,2,3,4,5]);
 
 // const button = document.createElement('button');
 // const clicks = fromEvent(button, 'click')
-const posts = fromPromise(fetch('api//'));
+// const posts = fromPromise(fetch('api//'));
 
-posts
-    .manipulate(map(r => r.json()))
-    .getValues( v => console.log(v))
+const callbacks = {
+  onData: function (value) {
+    console.log(value);
+  },
+  onError: function(error) {
+    console.log(error);
+  },
+  onDone: function () {
+    console.log("done");
+  }
+}
+
+
+numbers
+    .manipulate(map(v => v * 10))
+    .getValues(callbacks)
 
 // button.click();
 
