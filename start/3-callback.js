@@ -7,19 +7,37 @@ const collection = {
       callbackFn(item);
     }
   },
-  map: function (mapFn) {
-    const self = this;
+  manipulate: function (manipulateFn) {
+    return manipulateFn(this)
+  }
+}
+
+function map(mapFn) {
+  return function (inputCollection) {
     return {
-      getValue: function (callbackFn) {
-        self.getValues( value => {
-          const mappedValue = mapFn(value);
-          callbackFn(mappedValue);
-        })
+      getValues: function (callbackFn) {
+        inputCollection.getValues( value => callbackFn(mapFn(value)) )
+      },
+      manipulate: function (manipulateFn) {
+        return manipulateFn(this)
+      }
+    }
+  }
+}
+function filter(filterFn) {
+  return function (inputCollection) {
+    return {
+      getValues: function (callbackFn) {
+        inputCollection.getValues( value => filterFn(value) && callbackFn(value))
+      },
+      manipulate: function (manipulateFn) {
+        return manipulateFn(this)
       }
     }
   }
 }
 
 collection
-    .map( v => v * 10 )
-    .getValue( v => console.log(v))
+    .manipulate(map( v => v * 10 ))
+    .manipulate(filter( v => v === 20))
+    .getValues( v => console.log(v))
