@@ -44,7 +44,7 @@ function map(mapFn) {
         next: function (value) {
           observer.next(mapFn(value))
         },
-        onDone: observer.complete
+        complete: observer.complete
       })
     })
   }
